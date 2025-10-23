@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Excel Data</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+
+    <style>
+
+.bungee-regular {
+  font-family: "Bungee", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+#dataTable {
+
+
+display: none;
+
+}
+
+body {
+
+background-image: url("images/gradient.jpg");
+
+background-size: cover;
+
+background-repeat:no-repeat;
+
+
+}
+
+#myImage {
+
+position:relative;
+margin-top:10%;
+left: 50%;
+right: 50%;
+transform: translate(-50%, -50%);
+height: 30%;
+width: 30%;
+border-color: black;
+border-radius: 2%;
+border: 5px solid black;
+margin-bottom: -5%;
+
+}
+
+#header {
+  
+max-width: 1080px;      
+margin: 0 auto;        
+text-align: center;    
+white-space: normal;   
+word-break: normal;    
+margin-top: 3%;
+font-family:"Bungee";
+font-size:50px;
+}
+
+#isWoke {
+
+
+max-width: 600px;      
+margin: 0 auto;        
+text-align: center;    
+white-space: normal;   
+word-break: normal;    
+margin-top: 1%;
+font-family:"Bungee";
+font-size:16px;
+}
+
+#note {
+
+max-width: 600px;      
+margin: 0 auto;        
+text-align: center;    
+white-space: normal;   
+word-break: normal;    
+margin-top: 1%;
+font-family:"Bungee";
+font-size:16px;
+
+}
+
+#score {
+
+max-width: 600px;      
+margin: 0 auto;        
+text-align: center;    
+white-space: normal;   
+word-break: normal;    
+margin-top: 2%;
+font-family:"Bungee";
+font-size:30px;
+
+}
+
+#buttons {
+
+max-width: 1000px;      
+margin: 0 auto;        
+text-align: center;    
+white-space: normal;   
+word-break: normal;    
+margin-top: 2%;
+font-family:"Bungee";
+
+}
+
+#yes {
+
+
+font-family:"Bungee";
+background-color: brown;
+font-size:20px;
+display: inline-block;
+ padding: 15px 32px;
+}
+
+#maybe {
+font-size:20px;
+font-family:"Bungee";
+background-color: chartreuse;
+display: inline-block;
+ padding: 15px 32px;
+ margin-left: 2%;
+}
+
+#next {
+
+
+font-family:"Bungee";
+background-color: white;
+font-size:20px;
+display: inline-block;
+ padding: 15px 32px;
+ margin-left: 2%;
+
+}
+
+
+    </style>
+</head>
+
+
+<body>
+    <h1 id="header">Excel Data Loaded from File</h1>
+    
+    <div id = "buttons">
+
+    <button onclick="buttonTest(-1)" id = "yes">woke</button>
+<!--
+    <button onclick="buttonTest(1)" id = "no">not woke</button>
+-->
+    <button onclick="buttonTest(0)" id = "maybe">not woke/not that woke</button>
+
+    <button onclick="myrefresh()" id = "next">next</button>
+
+   </div>
+
+    <img id = "myImage" class = "theImage" src = "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2246340/header_292x136.jpg?t=1759120729">
+
+    <h1 id="isWoke">?</h1>
+
+    <h2 id="score">0</h2>
+
+    <h2 id = "note">note: kinda woke games and unwoke games are bunched together because the ratio of woke games to kinda woke games to unwoke games is basically exactly 2 : 1 : 1</h2>
+
+    <table id="dataTable" border="1">
+        <thead>
+            <tr></tr> <!-- Will be filled with column names -->
+        </thead>
+        <tbody>
+            <!-- Data rows will go here -->
+        </tbody>
+    </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script>
+        const csvFileUrl = 'data.csv'; 
+        var chosenIndex = 4;
+        var chosenWoke = 6;
+        var chosenImage;
+        var myScore = 0;
+        var answered = false;
+        var reason;
+        var round = 0;
+        var dateNumber = Date();
+        var daySplit = dateNumber.split(" ");
+        var myToday = daySplit[2];
+        var dailyNum = "daily" + myToday;
+       ;
+
+        const thisMonth = {
+        
+       id: 1, daily1: [1445, 152, 1431, 20, 302, 1098, 116, 380, 275, 30],
+       id: 2, daily2: [680, 380, 1295, 41, 127, 489, 1111, 337, 414, 518],
+       id: 3, daily3: [838, 1470, 688, 487, 1042, 143, 1199, 696, 89, 125],
+       id: 4, daily4: [1567, 1497, 1198, 910, 88, 1292, 1176, 29, 118, 1286],
+       id: 5, daily5: [545, 610, 1243, 765, 476, 358, 33, 369, 237, 137],
+       id: 6, daily6: [692, 1100, 1093, 1014, 1142, 579, 1390, 523, 853],
+       id: 7, daily7: [1151, 23, 872, 1314, 502, 1489, 721, 1399, 410, 837],
+      id: 8,  daily8: [871, 1246, 885, 289, 419, 900, 1507, 410, 140, 190],
+      id: 9,  daily9: [1141, 152, 854, 711, 429, 776, 1544, 1096, 1471, 1153],
+       id: 10, daily10: [795, 1023, 25, 625, 95, 549, 1471, 604, 556, 606],
+       id: 11, daily11: [19, 523, 1231, 690, 1205, 1209, 671, 836, 1288, 1374],
+       id: 12, daily12: [839, 674, 1138, 224, 463, 874, 229, 78, 1443, 629],
+       id: 13, daily13: [1588, 1000, 504, 1320, 989, 1414, 1176, 1274, 844, 946],
+       id: 14, daily14: [1509, 955, 853, 1279, 408, 691, 152, 884, 1509, 1063],
+       id: 15, daily15: [1028, 1409, 393, 954, 70, 1013, 693, 717, 1034, 433],
+       id: 16, daily16: [727, 616, 632, 1495, 1552, 1168, 612, 1458, 789, 1311],
+       id: 17, daily17: [266, 1572, 230, 1121, 1314, 268, 277, 605, 522, 59],
+       id: 18, daily18: [1518, 566, 534, 567, 1002, 527, 968, 394, 1469, 476],
+       id: 19, daily19: [846, 420, 50, 800, 1478, 950, 492, 569, 1388, 1257],
+       id: 20, daily20: [264, 1205, 1480, 634, 305, 716, 133, 286, 1258, 698],
+       id: 21, daily21: [1474, 714, 29, 1180, 924, 1369, 932, 786, 1350, 711],
+       id: 22, daily22: [156, 1488, 1595, 471, 5, 981, 240, 877, 1565, 1370],
+       id: 23, daily23: [505, 685, 596, 774, 90, 771, 498, 1160, 785, 1339],
+       id: 24, daily24: [20, 145, 1043, 606, 702, 623, 255, 1368, 500, 247],
+       id: 25, daily25: [795, 706, 1108, 214, 390, 663, 445, 891, 1527, 1424],
+       id: 26, daily26: [1434, 316, 508, 1223, 1538, 940, 1388, 1423, 270, 1519],
+       id: 27, daily27: [298, 519, 658, 58, 885, 1120, 433, 1389, 144, 1509],
+       id: 28, daily28: [1373, 515, 555, 1113, 26, 871, 348, 179, 718, 1339],
+       id: 29, daily29: [314, 291, 895, 1580, 1118, 1443, 648, 794, 1337, 7],
+       id: 30, daily30: [1496, 1076, 407, 1251, 1099, 675, 414, 1402, 311, 1569],
+       id: 31, daily31: [1353, 712, 100, 261, 321, 147, 628, 1272, 1300, 76]
+       };
+        var thisArray = thisMonth[dailyNum]
+        fetch(csvFileUrl)
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const sheetName = workbook.SheetNames[0]; 
+
+                const sheet = workbook.Sheets[sheetName];  
+
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });  
+
+                console.log(jsonData); //
+
+                displayData(jsonData);
+                displayRandomColumnData(jsonData, 1); 
+            })
+            .catch(error => {
+                console.error('Error loading the Excel file:', error);
+            });
+
+        function displayData(data) {
+            const table = document.getElementById("dataTable");
+            const headerRow = table.querySelector("thead tr");
+            const tbody = table.querySelector("tbody");
+
+            
+            headerRow.innerHTML = '';
+            tbody.innerHTML = '';
+
+            if (data.length > 0) {
+                
+                const header = data[0];
+                header.forEach(column => {
+                    const th = document.createElement("th");
+                    th.textContent = column;
+                    headerRow.appendChild(th);
+                });
+
+               
+                data.slice(1).forEach(row => {
+                    const tr = document.createElement("tr");
+                    row.forEach(cell => {
+                        const td = document.createElement("td");
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function displayRandomColumnData(data, columnIndex) {
+            
+            
+          const randomRowIndex = thisArray[round];
+            chosenIndex = randomRowIndex;
+            const randomRow = data[randomRowIndex];
+            
+           
+            const randomData = randomRow[columnIndex];  
+            chosenWoke = randomRow[3];
+            chosenImage = randomRow[2];
+            reason = randomRow[4];
+           // var randomWoke = randomRow[2];
+          
+            const header = document.getElementById("header");
+            header.textContent = `${randomData}`;
+            document.getElementById("myImage").src = chosenImage
+          
+        }
+
+        function buttonTest(answer) {
+            if (answered == false) {
+                if (round <= 10) {
+                round += 1;
+      //    header.textContent = chosenIndex;
+         //   document.getElementById("header").innerHTML = answer;
+
+            if ((chosenWoke == -1 && answer == chosenWoke) || (chosenWoke > -1 && answer > -1)) {
+
+                document.getElementById("isWoke").innerHTML = "correct: " + reason;
+                myScore += 1;
+                document.getElementById("score").innerHTML = '' + myScore + "/10";
+            }
+            else {
+
+                document.getElementById("isWoke").innerHTML = "wrong: " + reason;
+                
+                document.getElementById("score").innerHTML = '' + myScore + "/10";
+            }
+              if (chosenWoke == -1) {
+
+            document.getElementById("myImage").style.border = '5px solid brown'; 
+                }
+                else if (chosenWoke == 0) {
+
+                    document.getElementById("myImage").style.border = '5px solid chartreuse';
+
+                }
+                else if (chosenWoke == 1) {
+
+                    document.getElementById("myImage").style.border = '5px solid chartreuse';
+
+                }
+
+            answered = true;
+        }
+    }
+      
+        }
+
+        function refresh() {
+          
+            if (answered == true) {
+
+            const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];  
+                const sheet = workbook.Sheets[sheetName];  
+            const myjsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        displayRandomColumnData(myjsonData, 1);
+        answered = false;
+            }
+        }
+
+            function myrefresh() {
+    if (round == 10) {
+
+            alert("good job!" + "score = " + myScore);
+
+        }
+        else {
+                if (answered == true) {
+            fetch(csvFileUrl)
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];  // Get the first sheet name
+                const sheet = workbook.Sheets[sheetName];  // Get the first sheet data
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });  // Convert to JSON array
+
+                console.log(jsonData); // Log the data for inspection
+                displayData(jsonData);
+                displayRandomColumnData(jsonData, 1); // Pass the column index (e.g., 1 for the second column)
+            })
+            .catch(error => {
+                console.error('Error loading the Excel file:', error);
+            });
+             document.getElementById("myImage").style.border = '5px solid black';
+            document.getElementById("isWoke").innerHTML = "?";
+            answered = false;
+        }
+            }
+        }
+    </script>
+</body>
+</html>
