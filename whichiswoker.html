@@ -192,13 +192,14 @@ padding: 15px 32px;
 #myBox {
 
 width: 50%;
-height: 50%;
+height: auto;
 font-family:"Bungee";
 background-color: lightblue;
 font-size: 60%;
 position:absolute;
 display: flex;
-justify-content: center;
+flex-direction: column;
+justify-content: flex-start;
 border-color: black;
 border-radius: 3%;
 text-align: center;
@@ -210,12 +211,25 @@ display: none;
 border: 5px solid;
 }
 
-#adImg {
-
-width: 65%;
-height: 20%;
 
 
+.imgur {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  flex: 0 0 auto; 
+   margin: 0 auto 24px auto;
+}
+
+
+.imgur video {
+  
+ 
+  width: 100%;
+    height: auto;
+
+  display: block;
 }
 
     </style>
@@ -224,13 +238,15 @@ height: 20%;
 
 <body>
 
-  <div id="myBox" class = "myBox">
+  <div id="myBox" class="myBox">
+  <h1 id="scoreTxt" class="scoreTxt">hello</h1>
 
-<h1 id="scoreTxt" class="scoreTxt">hello</h1>
-
-<img id = "adImg" src = "images/demo1.gif">
-
-    </div>
+  <div class="imgur">
+   <video autoplay loop muted playsinline>
+  <source src="images/vidDemo.mp4" type="video/mp4">
+</video>
+  </div>
+</div>
 
     <a href="index.html" id = "homeButton">Home</a>
 
@@ -303,7 +319,7 @@ height: 20%;
         
             daily01: [[904, 59], [1229, 1479], [1093, 695], [727, 1175], [107, 236], [183, 537], [1067, 844], [68, 1318], [1188, 561], [1402, 613], [599, 600]],
             daily02: [[1138, 895], [1217, 1185], [535, 1136], [358, 993], [829, 531], [1235, 192], [234, 1313], [204, 18], [429, 197], [1526, 759], [599, 600]],
-            daily03: [[1306, 550], [356, 156], [671, 1256], [367, 1413], [85, 1414], [220, 620], [844, 812], [250, 879], [122, 640], [813, 762], [599, 600]],
+            daily03: [[1306, 550], [356, 156], [671, 1256], [367, 1425], [85, 1414], [220, 620], [844, 812], [250, 879], [122, 640], [813, 762], [599, 600]],
             daily04: [[506, 1497], [642, 1372], [53, 363], [529, 749], [633, 433], [364, 595], [255, 1157], [956, 679], [1441, 144], [1080, 323], [599, 600]],
             daily05: [[131, 653], [1364, 1231], [378, 859], [590, 439], [1556, 1380], [1549, 189], [1457, 1392], [1536, 789], [464, 1431], [717, 234], [599, 600]],
             daily06: [[1128, 258], [1070, 495], [163, 362], [1154, 317], [362, 941], [1568, 1231], [1261, 335], [679, 574], [520, 921], [937, 763], [599, 600]],

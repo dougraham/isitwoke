@@ -175,13 +175,14 @@ padding: 15px 32px;
 #myBox {
 
 width: 50%;
-height: 50%;
+height: auto;
 font-family:"Bungee";
 background-color: lightblue;
-
+font-size: 60%;
 position:absolute;
 display: flex;
-justify-content: center;
+flex-direction: column;
+justify-content: flex-start;
 border-color: black;
 border-radius: 3%;
 text-align: center;
@@ -193,10 +194,23 @@ display: none;
 border: 5px solid;
 }
 
-#adImg {
+.imgur {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  flex: 0 0 auto; 
+   margin: 0 auto 24px auto;
+}
 
 
+.imgur video {
+  
+ 
+  width: 100%;
+    height: auto;
 
+  display: block;
 }
 
     </style>
@@ -205,13 +219,15 @@ border: 5px solid;
 
 <body>
 
-    <div id="myBox" class = "myBox">
+    <div id="myBox" class="myBox">
+  <h1 id="scoreTxt" class="scoreTxt">hello</h1>
 
-<h1 id="scoreTxt" class="scoreTxt">hello</h1>
-
-<img id = "adImg" src = "images/demo1.gif">
-
-    </div>
+  <div class="imgur">
+   <video autoplay loop muted playsinline>
+  <source src="images/vidDemo.mp4" type="video/mp4">
+</video>
+  </div>
+</div>
     <a href="index.html" id = "homeButton">Home</a>
 
     <h1 id="header" class="header">Excel Data Loaded from File</h1>
